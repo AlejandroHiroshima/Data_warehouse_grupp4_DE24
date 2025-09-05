@@ -1,0 +1,20 @@
+USE ROLE SYSADMIN;
+
+CREATE WAREHOUSE IF NOT EXISTS group4_wh
+WITH
+WAREHOUSE_SIZE = 'XSMALL'
+AUTO_SUSPEND = 60
+AUTO_RESUME = TRUE
+INITIALLY_SUSPENDED = TRUE
+COMMENT = 'Warehouse built for analyzing Security, Pedagogy and Logistics';
+
+CREATE DATABASE IF NOT EXISTS group4_db;
+
+CREATE SCHEMA IF NOT EXISTS group4_db.staging;
+CREATE SCHEMA IF NOT EXISTS group4_db.warehouse;
+CREATE SCHEMA IF NOT EXISTS group4_db.mart;
+
+
+
+
+
