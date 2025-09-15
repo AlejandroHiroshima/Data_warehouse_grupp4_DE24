@@ -1,7 +1,7 @@
 with src_job_details as (select * from {{ ref('src_job_details') }})
 
 select 
-    {{dbt_utils.generate_surrogate_key(['id', 'headline'])}} as job_details,
+    {{dbt_utils.generate_surrogate_key(['id', 'headline'])}} as job_details_id,
     headline,
     description,
     description_html_formatted,
