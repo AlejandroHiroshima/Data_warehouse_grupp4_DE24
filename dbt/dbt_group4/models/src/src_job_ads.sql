@@ -7,6 +7,8 @@
 
     -- Select statement is major part of the model
     SELECT
+        id,
+        headline,
         occupation__label,
         number_of_vacancies as vacancies,
         relevance,
