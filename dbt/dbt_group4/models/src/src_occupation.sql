@@ -1,6 +1,7 @@
  with stg_job_ads as (select * from {{ source('job_ads', 'stg_ads') }} )
 
  select
+    id,
     occupation_group__concept_id as occupation_group_id,
     occupation_field__concept_id as occupation_field_id,
     occupation__label as occupation,
