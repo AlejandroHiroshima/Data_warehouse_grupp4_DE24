@@ -1,4 +1,4 @@
-with src_occupational as (select * from {{ ref('src_occupational') }})
+with src_occupational as (select * from {{ ref('src_occupation') }})
 
 select
     {{ dbt_utils.generate_surrogate_key(['occupation']) }} as occupation_id,
