@@ -1,4 +1,4 @@
-with src_job_details as (select * from {{ ref('src_job_details') }})
+{# with src_job_details as (select * from {{ ref('src_job_details') }})
 
 select 
     {{dbt_utils.generate_surrogate_key(['headline', 'description', 'description_html_formatted', 'employment_type', 'duration','salary_type', 'scope_of_work_min',
@@ -22,6 +22,25 @@ GROUP by
     duration,
     salary_type, 
     scope_of_work_min,
-    scope_of_work_max;
+    scope_of_work_max; #}
+
+
+    with src_job_details as (select * from {{ ref('src_job_details') }})
+
+{# select *  #}
+
+-- we use aggregate function max() for deduplicate, but there are more alternative codes one can use for this purpose
+select
+    {{ dbt_utils.generate_surrogate_key(['id', 'headline'])}} as job_details_id,
+    headline,
+    description,
+    description_html_formatted,
+    employment_type,
+    duration,
+    salary_type,
+    scope_of_work_min,
+    scope_of_work_max
+from src_job_details
+
 
 
