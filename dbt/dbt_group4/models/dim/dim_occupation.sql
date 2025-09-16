@@ -6,4 +6,6 @@ select
     max(occupation_group) as occupation_group,
     max(occupation_field) as occupation_field
 from src_occupational
-group by occupation
+
+group by 
+occupation
