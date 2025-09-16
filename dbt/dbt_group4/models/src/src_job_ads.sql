@@ -15,3 +15,4 @@
         application_deadline
     FROM stg_job_ads
     order by application_deadline
+    

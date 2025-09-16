@@ -61,6 +61,152 @@ left join o  on o.occupation = ja.occupation__label
 
 ---- test med dim
 
+{# with
+  -- measures + källfält
+  ja as (
+    select *
+    from {{ ref('src_job_ads') }}
+  ),
 
+  -- arbetsplatsfält direkt från src_employer
+  je as (
+    select id, workplace_region, workplace_postcode, workplace_street_address
+    from {{ ref('src_employer') }}
+  ),
+
+  -- mapping-CTE:er för att bygga samma SK som dimmarna
+  jdm as (
+    select id, headline
+    from {{ ref('src_job_details') }}
+  ),
+  em as (
+    select id, employer_name
+    from {{ ref('src_employer') }}
+  ),
+
+  -- dimensioner
+  jd as (select * from {{ ref('dim_job_details') }}),
+  e  as (select * from {{ ref('dim_employer') }}),
+  a  as (select * from {{ ref('dim_auxilliary_attributes') }}),
+  o  as (select * from {{ ref('dim_occupation') }})
+
+select
+  -- FK från dimensionerna
+  o.occupation_id,
+  jd.job_details_id,
+  e.employer_id,
+  a.auxilliary_attributes_id,
+
+  -- measures från ads
+  ja.vacancies,
+  ja.relevance,
+  ja.application_deadline,
+
+  -- attribut
+  jd.headline,
+  jd.employment_type,
+  jd.description,
+  e.employer_name,
+  e.employer_organization_number,
+  o.occupation,
+  a.experience_required,
+  je.workplace_region,
+  je.workplace_postcode,
+  je.workplace_street_address
+from ja
+-- job_details via samma SK: hash(id, headline)
+left join jdm on jdm.id = ja.id
+left join jd  on jd.job_details_id = {{ dbt_utils.generate_surrogate_key(['jdm.id','jdm.headline']) }}
+
+-- employer via samma SK: hash(id, employer_name)
+left join em on em.id = ja.id
+left join e  on e.employer_id = {{ dbt_utils.generate_surrogate_key(['em.id','em.employer_name']) }}
+
+-- aux via samma SK: hash(id)
+left join a  on a.auxilliary_attributes_id = {{ dbt_utils.generate_surrogate_key(['ja.id']) }}
+
+-- occupation via samma SK: hash(occupation)
+left join o  on o.occupation_id = {{ dbt_utils.generate_surrogate_key(['ja.occupation__label']) }}
+
+-- arbetsplatsfält
+left join je on je.id = ja.id
+ #}
+
+
+ with
+  -- measures + källfält
+  ja as (
+    select *
+    from {{ ref('src_job_ads') }}
+  ),
+
+  -- arbetsplatsfält direkt från src_employer
+  je as (
+    select id, workplace_region, workplace_postcode, workplace_street_address
+    from {{ ref('src_employer') }}
+  ),
+
+  -- mapping-CTE:er för att bygga samma SK som dimmarna
+  jdm as (
+    select id, headline
+    from {{ ref('src_job_details') }}
+  ),
+  em as (
+    select id, employer_name
+    from {{ ref('src_employer') }}
+  ),
+
+  -- dimensioner
+  jd as (select * from {{ ref('dim_job_details') }}),
+  e  as (select * from {{ ref('dim_employer') }}),
+  a  as (select * from {{ ref('dim_auxilliary_attributes') }}),
+  o  as (select * from {{ ref('dim_occupation') }})
+
+select
+  -- FK från dimensionerna
+  o.occupation_id,
+  jd.job_details_id,
+  e.employer_id,
+  a.auxilliary_attributes_id,
+
+  -- measures från ads
+  ja.vacancies,
+  ja.relevance,
+  ja.application_deadline,
+
+  -- attribut
+  jd.headline,
+  jd.employment_type,
+  jd.description,
+  e.employer_name,
+  e.employer_organization_number,
+  o.occupation,
+  a.experience_required,
+  je.workplace_region,
+  je.workplace_postcode,
+  je.workplace_street_address,
+  a.auxilliary_attributes_id,
+  jd.job_details_id,
+
+
+from ja
+-- job_details via samma SK: hash(id, headline)
+left join jdm on jdm.id = ja.id
+left join jd  on jd.job_details_id = {{ dbt_utils.generate_surrogate_key(['jdm.id','jdm.headline']) }}
+
+-- employer via samma SK: hash(id, employer_name)
+left join em on em.id = ja.id
+left join e  on e.employer_id = {{ dbt_utils.generate_surrogate_key(['em.id','em.employer_name']) }}
+
+-- aux via samma SK: hash(id)
+left join a  on a.auxilliary_attributes_id = {{ dbt_utils.generate_surrogate_key(['ja.id']) }}
+
+-- occupation via samma SK: hash(occupation)
+left join o  on o.occupation_id = {{ dbt_utils.generate_surrogate_key(['ja.occupation__label']) }}
+
+-- arbetsplatsfält
+left join je on je.id = ja.id
+
+{# where e.employer_name = 'Eterni Sweden AB' AND je.workplace_region = 'Kronobergs län' #}
 
 
