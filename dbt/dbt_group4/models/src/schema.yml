@@ -1,0 +1,32 @@
+models:
+    - name: dim_employer
+      columns:
+            - name: employer_id
+              data_tests:
+                - unique
+                - not_null
+
+    - name: fct_job_ads
+      columns:
+            - name: employer_id
+              data_tests:
+                - unique
+                - not_null
+
+            - name: occupation_id
+              data_tests:
+                - unique
+                - not_null
+            - name: job_details_id
+              data_tests:
+                - unique
+                - not_null
+            - name: auxilliary_attributes_id
+              data_tests:
+                - unique
+                - not_null
+
+
+                
+
+        
