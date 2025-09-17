@@ -44,7 +44,44 @@ def layout():
             )
         )
         
+    with cols[1]:
+        st.markdown("### Per company (top 5)")
+        st.bar_chart(
+            query_job_listings(
+                """ 
+                SELECT
+                    SUM(VACANCIES) as vacancies,
+                    employer_name
+                FROM
+                    mart_jobs
+                GROUP BY
+                    employer_name
+                ORDER BY
+                    vacancies DESC LIMIT 5;
+                """
+            ),
+            x="EMPLOYER_NAME",
+            y="VACANCIES"
+        )
         
+    st.markdown("## Find advertisement")   
+    
+    cols = st.columns(2)
+    
+    with cols[0]:
+        selected_company = st.selectbox("Select a company:", df["EMPLOYER_NAME"].unique())    
+        
+    with cols[1]:
+        selected_headline = st.selectbox("Select an advertisement:", df.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"],)  
+    
+    st.markdown("### Job ad")   
+    st.markdown(
+        df.query("HEADLINE == @selected_headline and EMPLOYER_NAME == @selected_company")["DESCRIPTION_HTML_FORMATTED"].VALUES[0], unsafe_allow_html=True)
+   
+   
+    st.markdown("## Job listings data")   
+    
+    
     st.dataframe(df)
 
         
