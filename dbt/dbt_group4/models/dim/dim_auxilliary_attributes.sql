@@ -24,4 +24,4 @@ select
     driver_license,
     access_to_own_car
    
-from src_auxilliary_attributes;
+from src_auxilliary_attributes
