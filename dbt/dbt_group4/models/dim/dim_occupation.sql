@@ -11,13 +11,12 @@ group by
 occupation #}
 
 
-WITH src_occupation as (select * from {{ ref('src_employer') }})
+WITH src_occupation as (select * from {{ ref('src_occupation') }})
 
 select 
 
-    {{ dbt_utils.generate_surrogate_key(['id', 'employer_name']) }} AS employer_id,
-    employer_name,
-
-    {{ capitalize_first_letter("coalesce(workplace_city, 'stad ej specificerad')") }} AS workplace_city
-
- from src_employer
+    {{ dbt_utils.generate_surrogate_key(['id', 'occupation']) }} AS occupation_id,
+    occupation,
+    occupation_group,
+    occupation_field
+ from src_occupation
