@@ -413,11 +413,20 @@ select
     {{ dbt_utils.generate_surrogate_key(['jd.id', 'jd.headline']) }} as job_details_id,
     {{ dbt_utils.generate_surrogate_key(['jd.id', 'e.employer_name']) }} as employer_id,
     {{ dbt_utils.generate_surrogate_key(['jd.id', 'a.experience_required']) }} as auxilliary_attributes_id,
-    {{ dbt_utils.generate_surrogate_key(['jd.id', 'o.occupation_field']) }} as occupation_id,
+    {{ dbt_utils.generate_surrogate_key(['jd.id', 'o.occupation']) }} as occupation_id,
 
     vacancies,
     relevance,
-    application_deadline
+    application_deadline,
+
+    -- Manual testing
+
+    e.employer_name, 
+    jd.description,
+    o.occupation
+
+    -- borås kommun 5cc72aad4f0096fd5fda1063565eb256
+    -- arvidsjaur kommun a95554cd28287de89eec5955242b1e8c
  
 from 
     ja
@@ -429,3 +438,5 @@ left join
     a on ja.id = a.id
 left join
     o on ja.id = o.id
+
+where occupation_id = 'e4ae745a0e55339d00a3a413e52db9b4'
