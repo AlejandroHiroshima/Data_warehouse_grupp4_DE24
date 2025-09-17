@@ -1,0 +1,54 @@
+import streamlit as st    
+from connect_data_warehouse import query_job_listings
+
+def layout():
+    df = query_job_listings()
+
+    
+    st.title("")
+    st.write("")
+    
+    st.markdown("## Vacancies")
+    cols = st.columns(4)
+    
+    with cols[0]:
+        st.metric(label="Total", value = df["VACANCIES"].sum())
+    
+    with cols[1]:
+        st.metric(label="In Göteborg",
+        value = df.query("WORKPLACE_CITY == 'Göteborg'")['VACANCIES'].sum())
+    
+    
+    with cols[2]:
+        st.metric(label="In Stockholm",
+        value = df.query("WORKPLACE_CITY == 'Stockholm'")['VACANCIES'].sum())
+   
+    
+    cols = st.columns(2)
+    
+    with cols[0]:
+        st.markdown("### Per city")
+        st.dataframe(
+            query_job_listings(
+                """ 
+                SELECT
+                    SUM(VACANCIES) as vacancies,
+                    WORKPLACE_CITY
+                FROM
+                    mart_jobs
+                GROUP BY
+                    WORKPLACE_CITY
+                ORDER BY
+                    vacancies DESC;
+                """
+            )
+        )
+        
+        
+    st.dataframe(df)
+
+        
+    
+    
+if __name__ == "__main__":
+    layout()
