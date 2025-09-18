@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from snowflake.connector import connect
 import pandas as pd
 
-def query_job_listings(query = 'SELECT * FROM mart_jobs'):
+def query_job_listings(query):
     load_dotenv()
     
     

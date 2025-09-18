@@ -2,47 +2,60 @@ import streamlit as st
 from connect_data_warehouse import query_job_listings
 
 def layout():
-    df = query_job_listings()
+    st.set_page_config(layout="wide")
+    st.write("Filtrera på yrkeskategori")
+    choices =  {'Pedagogik':'mart_p', 
+                'Säkerhet och bevakning':'mart_sb', 
+                'Transport, distribution, lager':'mart_tdl'}
+    selected_occupation_field = st.selectbox("Välj yrkeskategori", options = choices.keys(), index= None)
+    if selected_occupation_field:
+        df = query_job_listings(query=f"select * from {choices[selected_occupation_field]}")
+        
+        cols = st.columns(2)
+        with cols[0]:
+            st.metric(label="Total vacancies", value = df["VACANCIES"].sum())
+
+        st.dataframe(df)
 
     
-    st.title("")
-    st.write("")
-    
-    st.markdown("## Vacancies")
-    cols = st.columns(4)
-    
-    with cols[0]:
-        st.metric(label="Total", value = df["VACANCIES"].sum())
-    
-    with cols[1]:
-        st.metric(label="In Göteborg",
-        value = df.query("WORKPLACE_CITY == 'Göteborg'")['VACANCIES'].sum())
+    # st.title("")
     
     
-    with cols[2]:
-        st.metric(label="In Stockholm",
-        value = df.query("WORKPLACE_CITY == 'Stockholm'")['VACANCIES'].sum())
+    # st.markdown("## Vacancies")
+    # cols = st.columns(4)
+    
+    # with cols[0]:
+    #     st.metric(label="Total", value = df["VACANCIES"].sum())
+    
+    # with cols[1]:
+    #     st.metric(label="In Göteborg",
+    #     value = df.query("WORKPLACE_CITY == 'Göteborg'")['VACANCIES'].sum())
+    
+    
+    # with cols[2]:
+    #     st.metric(label="In Stockholm",
+    #     value = df.query("WORKPLACE_CITY == 'Stockholm'")['VACANCIES'].sum())
    
     
-    cols = st.columns(2)
+    # cols = st.columns(2)
     
-    with cols[0]:
-        st.markdown("### Per city")
-        st.dataframe(
-            query_job_listings(
-                """ 
-                SELECT
-                    SUM(VACANCIES) as vacancies,
-                    WORKPLACE_CITY
-                FROM
-                    mart_jobs
-                GROUP BY
-                    WORKPLACE_CITY
-                ORDER BY
-                    vacancies DESC;
-                """
-            )
-        )
+    # with cols[0]:
+    #     st.markdown("### Per city")
+    #     st.dataframe(
+    #         query_job_listings(
+    #             """ 
+    #             SELECT
+    #                 SUM(VACANCIES) as vacancies,
+    #                 WORKPLACE_CITY
+    #             FROM
+    #                 mart_jobs
+    #             GROUP BY
+    #                 WORKPLACE_CITY
+    #             ORDER BY
+    #                 vacancies DESC;
+    #             """
+    #         )
+    #     )
         
     with cols[1]:
             st.markdown(
@@ -59,25 +72,25 @@ def layout():
             st.bar_chart(df, x="Arbetsgivare", y="Annonser")
 
         
-    st.markdown("## Find advertisement")   
+    # st.markdown("## Find advertisement")   
     
-    cols = st.columns(2)
+    # cols = st.columns(2)
     
-    with cols[0]:
-        selected_company = st.selectbox("Select a company:", df["EMPLOYER_NAME"].unique())    
+    # with cols[0]:
+    #     selected_company = st.selectbox("Select a company:", df["EMPLOYER_NAME"].unique())    
         
-    with cols[1]:
-        selected_headline = st.selectbox("Select an advertisement:", df.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"],)  
+    # with cols[1]:
+    #     selected_headline = st.selectbox("Select an advertisement:", df.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"],)  
     
-    st.markdown("### Job ad")   
-    st.markdown(
-        df.query("HEADLINE == @selected_headline and EMPLOYER_NAME == @selected_company")["DESCRIPTION_HTML_FORMATTED"].VALUES[0], unsafe_allow_html=True)
+    # st.markdown("### Job ad")   
+    # st.markdown(
+    #     df.query("HEADLINE == @selected_headline and EMPLOYER_NAME == @selected_company")["DESCRIPTION_HTML_FORMATTED"].VALUES[0], unsafe_allow_html=True)
    
    
-    st.markdown("## Job listings data")   
+    # st.markdown("## Job listings data")   
     
     
-    st.dataframe(df)
+    # st.dataframe(df)
 
         
     
