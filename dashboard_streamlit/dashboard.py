@@ -46,18 +46,7 @@ def layout():
                     yaxis_title="Antal annonser",
                     title="Top 10 företag med flest annonser")
 
-    #             # Gör axelrubriker feta och centrera titel
-    #             fig.update_layout(
-    #             xaxis_title="<b>Arbetsgivare</b>",
-    #             yaxis_title="<b>Annonser</b>",
-    #             title=dict(
-    #             text="Top 10 företag med flest annonser",
-    #             x=0.5,  # centrera titel
-    #             xanchor="center"
-    # )
-# )
                 st.plotly_chart(fig_top10, use_container_width=True)
-            
     
         with cols[2]:
             table = choices[selected_occupation_field]
@@ -79,16 +68,6 @@ def layout():
                 title="Top 5 regioner med flest annonser"
                 )
 
-#             # Gör axelrubriker feta och centrera titel
-#             fig.update_layout(
-#             xaxis_title="<b>Region</b>",
-#             yaxis_title="<b>Antal annonser</b>",
-#             title=dict(
-#             text="Top 5 regioner med flest annonser",
-#             x=0.5,  # centrera titel
-#             xanchor="center"
-#     )
-# )
             st.plotly_chart(fig_top5, use_container_width=True)
 
         st.markdown("## Hitta jobbannons")   
@@ -96,7 +75,7 @@ def layout():
         cols = st.columns(2)
         
         with cols[0]:
-            selected_company = st.selectbox("Välj arbetsgvare:", df_all["EMPLOYER_NAME"].unique(), index= None)    
+            selected_company = st.selectbox("Välj arbetsgivare:", df_all["EMPLOYER_NAME"].unique(), index= None)    
             if selected_company:
                 selected_headline = st.selectbox(
                     "Välj en jobbannons:", df_all.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"], index = None)
@@ -107,7 +86,6 @@ def layout():
                               
         with cols[1]:
             st.write("")
-        
      
 if __name__ == "__main__":
     layout()
