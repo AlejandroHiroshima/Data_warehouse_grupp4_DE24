@@ -1,9 +1,11 @@
 import streamlit as st    
 from connect_data_warehouse import query_job_listings
+import plotly.express as px
 
 def layout():
     st.set_page_config(layout="wide")
-    st.write("Filtrera på yrkeskategori")
+    st.title("Yrkesfaktavägledaren")
+    # st.write("Filtrera på yrkeskategori")
     choices =  {'Pedagogik':'mart_p', 
                 'Säkerhet och bevakning':'mart_sb', 
                 'Transport, distribution, lager':'mart_tdl'}
@@ -11,11 +13,11 @@ def layout():
     if selected_occupation_field:
         df = query_job_listings(query=f"select * from {choices[selected_occupation_field]}")
         
-        cols = st.columns(2)
+        cols = st.columns(3)
         with cols[0]:
-            st.metric(label="Total vacancies", value = df["VACANCIES"].sum())
+            st.metric(label="Total antal annonser", value = df["VACANCIES"].sum())
 
-        st.dataframe(df)
+       
 
     
     # st.title("")
@@ -57,19 +59,56 @@ def layout():
     #         )
     #     )
         
-    with cols[1]:
-            st.markdown(
-                "Top 10 företag med flest annonser")
-            df = query_job_listings("""
-        SELECT
-            SUM(VACANCIES) AS "Annonser",
-            employer_name  AS "Arbetsgivare"
-        FROM mart_jobs
-        GROUP BY 2
-        ORDER BY 1 DESC
-        LIMIT 10
-    """)
-            st.bar_chart(df, x="Arbetsgivare", y="Annonser")
+        with cols[1]:
+                df = query_job_listings(f"""
+            SELECT
+                SUM(VACANCIES) AS "Annonser",
+                employer_name  AS "Arbetsgivare"
+            FROM {choices[selected_occupation_field]}
+            GROUP BY 2
+            ORDER BY 1 DESC
+            LIMIT 10
+        """)
+                fig = px.bar(df, x="Arbetsgivare", y="Annonser")
+
+                # Gör axelrubriker feta och centrera titel
+                fig.update_layout(
+                xaxis_title="<b>Arbetsgivare</b>",
+                yaxis_title="<b>Annonser</b>",
+                title=dict(
+                text="Top 10 företag med flest annonser",
+                x=0.5,  # centrera titel
+                xanchor="center"
+    )
+)
+                st.plotly_chart(fig, use_container_width=True)
+            
+    
+        with cols[2]:
+            table = choices[selected_occupation_field]
+            df = query_job_listings(f"""
+            SELECT
+                workplace_region AS "Region",
+                SUM(vacancies)   AS "Annonser"
+            FROM {table}
+            GROUP BY workplace_region
+            ORDER BY "Annonser" DESC
+            LIMIT 5
+        """)
+            fig = px.bar(df, x="Region", y="Annonser")
+
+            # Gör axelrubriker feta och centrera titel
+            fig.update_layout(
+            xaxis_title="<b>Region</b>",
+            yaxis_title="<b>Antal annonser</b>",
+            title=dict(
+            text="Top 5 regioner med flest annonser",
+            x=0.5,  # centrera titel
+            xanchor="center"
+    )
+)
+            st.plotly_chart(fig, use_container_width=True)
+
 
         
     # st.markdown("## Find advertisement")   
