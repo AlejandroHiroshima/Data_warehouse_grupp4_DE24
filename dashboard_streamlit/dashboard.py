@@ -4,7 +4,7 @@ import plotly.express as px
 
 def layout():
     st.set_page_config(layout="wide")
-    st.title("Yrkesfaktavägledaren")
+    st.title("Yrkesfakta vägledaren")
     # st.write("Filtrera på yrkeskategori")
     choices =  {'Pedagogik':'mart_p', 
                 'Säkerhet och bevakning':'mart_sb', 
@@ -15,49 +15,21 @@ def layout():
         
         cols = st.columns(3)
         with cols[0]:
-            st.metric(label="Total antal annonser", value = df["VACANCIES"].sum())
+            st.metric(label="Total antal annonser", value=int(df["VACANCIES"].sum()))
+            st.write(f"Top 10 flest yrkesroller för {selected_occupation_field}")
+            table = choices[selected_occupation_field]
+            df_roles = query_job_listings(f"""
+                SELECT
+                    OCCUPATION AS "Yrkestitel",
+                    SUM(VACANCIES)        AS "Annonser"
+                FROM {table}
+                GROUP BY OCCUPATION
+                ORDER BY "Annonser" DESC
+                LIMIT 10
+            """)
+            st.dataframe(df_roles, hide_index=True)
 
-       
-
-    
-    # st.title("")
-    
-    
-    # st.markdown("## Vacancies")
-    # cols = st.columns(4)
-    
-    # with cols[0]:
-    #     st.metric(label="Total", value = df["VACANCIES"].sum())
-    
-    # with cols[1]:
-    #     st.metric(label="In Göteborg",
-    #     value = df.query("WORKPLACE_CITY == 'Göteborg'")['VACANCIES'].sum())
-    
-    
-    # with cols[2]:
-    #     st.metric(label="In Stockholm",
-    #     value = df.query("WORKPLACE_CITY == 'Stockholm'")['VACANCIES'].sum())
-   
-    
-    # cols = st.columns(2)
-    
-    # with cols[0]:
-    #     st.markdown("### Per city")
-    #     st.dataframe(
-    #         query_job_listings(
-    #             """ 
-    #             SELECT
-    #                 SUM(VACANCIES) as vacancies,
-    #                 WORKPLACE_CITY
-    #             FROM
-    #                 mart_jobs
-    #             GROUP BY
-    #                 WORKPLACE_CITY
-    #             ORDER BY
-    #                 vacancies DESC;
-    #             """
-    #         )
-    #     )
+  
         
         with cols[1]:
                 df = query_job_listings(f"""
@@ -111,23 +83,23 @@ def layout():
 
 
         
-    # st.markdown("## Find advertisement")   
-    
-    # cols = st.columns(2)
-    
-    # with cols[0]:
-    #     selected_company = st.selectbox("Select a company:", df["EMPLOYER_NAME"].unique())    
+        st.markdown("## Find advertisement")   
         
-    # with cols[1]:
-    #     selected_headline = st.selectbox("Select an advertisement:", df.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"],)  
+        cols = st.columns(2)
+        
+        with cols[0]:
+            selected_company = st.selectbox("Select a company:", df["EMPLOYER_NAME"].unique())    
+            
+        with cols[1]:
+            selected_headline = st.selectbox("Select an advertisement:", df.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"],)  
+        
+        st.markdown("Job ad")   
+        st.markdown(
+            df.query("HEADLINE == @selected_headline and EMPLOYER_NAME == @selected_company")["DESCRIPTION_HTML_FORMATTED"].values[0], unsafe_allow_html=True)
     
-    # st.markdown("### Job ad")   
-    # st.markdown(
-    #     df.query("HEADLINE == @selected_headline and EMPLOYER_NAME == @selected_company")["DESCRIPTION_HTML_FORMATTED"].VALUES[0], unsafe_allow_html=True)
-   
-   
-    # st.markdown("## Job listings data")   
     
+        st.markdown("## Job listings data")   
+        
     
     # st.dataframe(df)
 
