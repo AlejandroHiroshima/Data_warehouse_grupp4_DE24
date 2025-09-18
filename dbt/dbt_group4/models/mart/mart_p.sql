@@ -18,8 +18,9 @@ select
     jd.duration,
     jd.scope_of_work_min,
     jd.scope_of_work_max,
-    f.application_deadline
-
+    f.application_deadline,
+    o.occupation_group,
+    o.occupation
 from fct_job_ads f
 
 left join dim_occupation o on f.occupation_id = o.occupation_id
