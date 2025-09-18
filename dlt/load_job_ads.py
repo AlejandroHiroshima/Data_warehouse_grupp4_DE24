@@ -1,12 +1,3 @@
-#========================================#
-#                                        #
-#    This script loads job ads with      #
-#    certain occupation fields and       #
-#    use pagination to load more job     #
-#    ads.                                #
-#                                        #
-#========================================#
-
 
 import dlt
 import requests
@@ -14,21 +5,14 @@ import json
 from pathlib import Path
 import os
 
-
 def _get_ads(url_for_search, params):
     headers = {"accept": "application/json"}
     response = requests.get(url_for_search, headers=headers, params=params)
     response.raise_for_status()  # check for http errors
     return json.loads(response.content.decode("utf8"))
 
-
 @dlt.resource(write_disposition="append")
 def jobsearch_resource(params):
-    """
-    params should include at least:
-      - "q": your query
-      - "limit": page size (e.g. 100)
-    """
     url = "https://jobsearch.api.jobtechdev.se"
     url_for_search = f"{url}/search"
     limit = params.get("limit", 100)
@@ -54,7 +38,6 @@ def jobsearch_resource(params):
 
         offset += limit
 
-
 def run_pipeline(query, table_name, occupation_fields):
     pipeline = dlt.pipeline(
         pipeline_name="group4_pipeline",
@@ -69,7 +52,6 @@ def run_pipeline(query, table_name, occupation_fields):
         )
         print(f"Occupation field: {occupation_field}")
         print(load_info)
-
 
 if __name__ == "__main__":
     working_directory = Path(__file__).parent
