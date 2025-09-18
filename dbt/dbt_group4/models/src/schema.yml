@@ -1,30 +1,40 @@
+# Testa att det inte finns några null värden i ID variablerna i fct_jobs_ads och att den
+# referentiella intergriteten stämmer med dim modellernas ID, dvs de pekar på varandra. 
+
 models:
-    - name: dim_employer
-      columns:
-            - name: employer_id
-              data_tests:
-                - unique
-                - not_null
+  - name: fct_job_ads
+    columns:
+      - name: job_details_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_job_details')
+              field: job_details_id
 
-    - name: fct_job_ads
-      columns:
-            - name: employer_id
-              data_tests:
-                - unique
-                - not_null
+      - name: employer_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_employer')
+              field: employer_id
 
-            - name: occupation_id
-              data_tests:
-                - unique
-                - not_null
-            - name: job_details_id
-              data_tests:
-                - unique
-                - not_null
-            - name: auxilliary_attributes_id
-              data_tests:
-                - unique
-                - not_null
+      - name: occupation_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_occupation')
+              field: occupation_id
+
+      - name: auxilliary_attributes_id
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_auxilliary_attributes')
+              field: auxilliary_attributes_id
+
+
+            
+
 
 
                 

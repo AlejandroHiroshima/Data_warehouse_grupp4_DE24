@@ -57,25 +57,20 @@ def layout():
     #         )
     #     )
         
-    # with cols[1]:
-    #     st.markdown("### Per company (top 5)")
-    #     st.bar_chart(
-    #         query_job_listings(
-    #             """ 
-    #             SELECT
-    #                 SUM(VACANCIES) as vacancies,
-    #                 employer_name
-    #             FROM
-    #                 mart_jobs
-    #             GROUP BY
-    #                 employer_name
-    #             ORDER BY
-    #                 vacancies DESC LIMIT 5;
-    #             """
-    #         ),
-    #         x="EMPLOYER_NAME",
-    #         y="VACANCIES"
-    #     )
+    with cols[1]:
+            st.markdown(
+                "Top 10 företag med flest annonser")
+            df = query_job_listings("""
+        SELECT
+            SUM(VACANCIES) AS "Annonser",
+            employer_name  AS "Arbetsgivare"
+        FROM mart_jobs
+        GROUP BY 2
+        ORDER BY 1 DESC
+        LIMIT 10
+    """)
+            st.bar_chart(df, x="Arbetsgivare", y="Annonser")
+
         
     # st.markdown("## Find advertisement")   
     
