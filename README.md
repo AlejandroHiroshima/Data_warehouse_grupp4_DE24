@@ -15,15 +15,17 @@ Analyze the data in an interactive Streamlit dashboard
 
 --------------------------------
 
-⚙️ Tech Stack
 
-Component	Technology	Purpose
-Data ingestion	dlt
-	Load job ads from Jobtech API to Snowflake
-Data warehouse	Snowflake	Central data warehouse
-Transformation	dbt	Build staging, warehouse, and mart models
-Dashboard	Streamlit (Python)	Interactive visualizations & KPIs
-Version control	Git + GitHub	Collaboration & versioning
+## ⚙️ Tech Stack
+
+| Component         | Technology             | Purpose                                     |
+|------------------|-------------------------|----------------------------------------------|
+| Data ingestion    | dlt                     | Load job ads from Jobtech API to Snowflake   |
+| Data warehouse    | Snowflake                | Central data warehouse                      |
+| Transformation    | dbt                      | Build staging, warehouse, and mart models   |
+| Dashboard         | Streamlit (Python)       | Interactive visualizations & KPIs            |
+| Version control   | Git + GitHub              | Collaboration & versioning                  |
+
 
 --------------------------
 
@@ -56,6 +58,21 @@ Number of vacancies
 Number of ads per company
 
 -----------------------------
+🧪 Data Quality & Documentation
+
+We implemented both data tests and documentation in dbt to ensure data quality, trust, and transparency across the project.
+
+✅ Data Quality (dbt tests)
+
+not_null and unique tests on all surrogate keys in dimension tables
+
+not_null and relationships tests on all foreign keys in fct_job_ads
+
+All models and columns are documented in dbt.
+dbt Docs provides an interactive lineage graph (see image below) and detailed metadata for each model — showing how data flows from the raw src_ layer to the dim_ and fct_ layers, and finally to the mart_ models used by the dashboard.
+
+----------------------------
+
 
 Getting Started
 1. Clone the repo
