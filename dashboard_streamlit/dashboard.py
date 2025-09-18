@@ -1,6 +1,6 @@
 import streamlit as st    
 from connect_data_warehouse import query_job_listings
-import plotly.express as px
+from plots import create_bar_chart
 
 def layout():
     st.set_page_config(layout="wide")
@@ -38,19 +38,25 @@ def layout():
             ORDER BY 1 DESC
             LIMIT 10
         """)
-                fig = px.bar(df_top10_employers, x="Arbetsgivare", y="Annonser")
+                fig_top10 = create_bar_chart(
+                    df_top10_employers, 
+                    x_col="Arbetsgivare", 
+                    y_col="Annonser",
+                    xaxis_title="Företag",
+                    yaxis_title="Antal annonser",
+                    title="Top 10 företag med flest annonser")
 
-                # Gör axelrubriker feta och centrera titel
-                fig.update_layout(
-                xaxis_title="<b>Arbetsgivare</b>",
-                yaxis_title="<b>Annonser</b>",
-                title=dict(
-                text="Top 10 företag med flest annonser",
-                x=0.5,  # centrera titel
-                xanchor="center"
-    )
-)
-                st.plotly_chart(fig, use_container_width=True)
+    #             # Gör axelrubriker feta och centrera titel
+    #             fig.update_layout(
+    #             xaxis_title="<b>Arbetsgivare</b>",
+    #             yaxis_title="<b>Annonser</b>",
+    #             title=dict(
+    #             text="Top 10 företag med flest annonser",
+    #             x=0.5,  # centrera titel
+    #             xanchor="center"
+    # )
+# )
+                st.plotly_chart(fig_top10, use_container_width=True)
             
     
         with cols[2]:
@@ -64,35 +70,44 @@ def layout():
             ORDER BY "Annonser" DESC
             LIMIT 5
         """)
-            fig = px.bar(df_top5_region, x="Region", y="Annonser")
+            fig_top5 = create_bar_chart(
+                df_top5_region, 
+                x_col="Region", 
+                y_col="Annonser",
+                xaxis_title= "Regioner",
+                yaxis_title= "Antal annonser",
+                title="Top 5 regioner med flest annonser"
+                )
 
-            # Gör axelrubriker feta och centrera titel
-            fig.update_layout(
-            xaxis_title="<b>Region</b>",
-            yaxis_title="<b>Antal annonser</b>",
-            title=dict(
-            text="Top 5 regioner med flest annonser",
-            x=0.5,  # centrera titel
-            xanchor="center"
-    )
-)
-            st.plotly_chart(fig, use_container_width=True)
+#             # Gör axelrubriker feta och centrera titel
+#             fig.update_layout(
+#             xaxis_title="<b>Region</b>",
+#             yaxis_title="<b>Antal annonser</b>",
+#             title=dict(
+#             text="Top 5 regioner med flest annonser",
+#             x=0.5,  # centrera titel
+#             xanchor="center"
+#     )
+# )
+            st.plotly_chart(fig_top5, use_container_width=True)
 
-
-        
-        st.markdown("## Find advertisement")   
+        st.markdown("## Hitta jobbannons")   
         
         cols = st.columns(2)
         
         with cols[0]:
-            selected_company = st.selectbox("Välj ett företag:", df_all["EMPLOYER_NAME"].unique(), index= None)    
-            
+            selected_company = st.selectbox("Välj arbetsgvare:", df_all["EMPLOYER_NAME"].unique(), index= None)    
+            if selected_company:
+                selected_headline = st.selectbox(
+                    "Välj en jobbannons:", df_all.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"], index = None)
+                if selected_headline:
+                    st.markdown(
+                        df_all.query(
+                            "HEADLINE == @selected_headline and EMPLOYER_NAME == @selected_company")["DESCRIPTION_HTML_FORMATTED"].values[0], unsafe_allow_html=True)
+                              
         with cols[1]:
-            selected_headline = st.selectbox("Välj en jobbannons:", df_all.query ("EMPLOYER_NAME == @selected_company")["HEADLINE"], index = None)  
+            st.write("")
         
-        if selected_headline and selected_company:
-            st.markdown(
-                df_all.query("HEADLINE == @selected_headline and EMPLOYER_NAME == @selected_company")["DESCRIPTION_HTML_FORMATTED"].values[0], unsafe_allow_html=True)
      
 if __name__ == "__main__":
     layout()
