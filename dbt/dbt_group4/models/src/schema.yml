@@ -3,31 +3,40 @@
 
 models:
   - name: fct_job_ads
+    description: "Tabell där vi har all fakta som vi knutit från SRC lagret"
     columns:
       - name: job_details_id
+        description: "I  dim_job_details finns all info om innehållet i arbeten. ID är en primär nyckel, en surrogate key baserad på id och headline"
         data_tests:
           - not_null
+          - unique
           - relationships:
               to: ref('dim_job_details')
               field: job_details_id
 
       - name: employer_id
+        description: "I dim_employer finns all info om arbetsgivaren, ID är en primär nyckel, en surrogate key baserad på id och employer_name"
         data_tests:
           - not_null
+          - unique
           - relationships:
               to: ref('dim_employer')
               field: employer_id
 
       - name: occupation_id
+        description: "I occupation tabllen finns all överordnad info som är knutet till arbetskategorin, ID är en primär nyckel, en surrogate key baserad på id och occupation_id"
         data_tests:
           - not_null
+          - unique
           - relationships:
               to: ref('dim_occupation')
               field: occupation_id
 
       - name: auxilliary_attributes_id
+        description: "I Auxilliary_attributes tabellen finns övrig mindre viktig info knutet till annonsen, ID är en primär nyckel, en surrogate key baserad på id och experience_required"
         data_tests:
           - not_null
+          - unique
           - relationships:
               to: ref('dim_auxilliary_attributes')
               field: auxilliary_attributes_id
