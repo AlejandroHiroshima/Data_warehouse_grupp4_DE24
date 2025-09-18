@@ -10,8 +10,9 @@ select
     f.vacancies,
     jd.salary_type,
     f.relevance,
-    e.employer_name, --
-    e.workplace_city, --
+    e.employer_name, 
+    e.workplace_city, 
+    e.workplace_region,
     jd.description,
     jd.description_html_formatted,
     jd.duration,
